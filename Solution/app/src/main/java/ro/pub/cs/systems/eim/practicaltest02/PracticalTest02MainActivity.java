@@ -26,7 +26,7 @@ public class PracticalTest02MainActivity extends AppCompatActivity {
     private Button setButton;
     private Button resetButton;
     private Button pollButton;
-    private TextView weatherForecastTextView;
+    private TextView resultTextView;
 
     private ServerThread serverThread;
     private ClientThread clientThread;
@@ -39,6 +39,7 @@ public class PracticalTest02MainActivity extends AppCompatActivity {
 
             if (serverPort.isEmpty()) {
                 Toast.makeText(getApplicationContext(), "Server port should be filled!", Toast.LENGTH_SHORT).show();
+                return;
             }
 
             serverThread = new ServerThread(Integer.parseInt(serverPort));
@@ -55,7 +56,43 @@ public class PracticalTest02MainActivity extends AppCompatActivity {
     private class SetAlarmButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            String clientAddress = clientAddressEditText.getText().toString();
+            String clientPort = clientPortEditText.getText().toString();
 
+            if (clientAddress.isEmpty() || clientPort.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Client connection parameters should be filled!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (serverThread == null || !serverThread.isAlive()) {
+                Toast.makeText(getApplicationContext(), "There is no server to connect to!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String hour = hourEditText.getText().toString();
+            String minute = minuteEditText.getText().toString();
+
+            if (hour == null || hour.isEmpty() || minute == null || minute.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Parameters from client (hour / minute) should be filled!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (Integer.parseInt(hour) < 0 || Integer.parseInt(hour) > 23) {
+                Toast.makeText(getApplicationContext(), "Hour should respect the 24h format!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (Integer.parseInt(minute) < 0 || Integer.parseInt(minute) > 59) {
+                Toast.makeText(getApplicationContext(), "Minute should be between 0 and 59!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String command = "set," + hour + "," + minute + "\n";
+
+            resultTextView.setText(Constants.EMPTY_STRING);
+
+            clientThread = new ClientThread(clientAddress, Integer.parseInt(clientPort), command, resultTextView);
+            clientThread.start();
         }
     }
 
@@ -63,7 +100,25 @@ public class PracticalTest02MainActivity extends AppCompatActivity {
     private class ResetAlarmButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            String clientAddress = clientAddressEditText.getText().toString();
+            String clientPort = clientPortEditText.getText().toString();
 
+            if (clientAddress.isEmpty() || clientPort.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Client connection parameters should be filled!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (serverThread == null || !serverThread.isAlive()) {
+                Toast.makeText(getApplicationContext(), "There is no server to connect to!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String command = "reset\n";
+
+            resultTextView.setText(Constants.EMPTY_STRING);
+
+            clientThread = new ClientThread(clientAddress, Integer.parseInt(clientPort), command, resultTextView);
+            clientThread.start();
         }
     }
 
@@ -71,7 +126,25 @@ public class PracticalTest02MainActivity extends AppCompatActivity {
     private class PollAlarmButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            String clientAddress = clientAddressEditText.getText().toString();
+            String clientPort = clientPortEditText.getText().toString();
 
+            if (clientAddress.isEmpty() || clientPort.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Client connection parameters should be filled!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (serverThread == null || !serverThread.isAlive()) {
+                Toast.makeText(getApplicationContext(), "There is no server to connect to!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String command = "poll\n";
+
+            resultTextView.setText(Constants.EMPTY_STRING);
+
+            clientThread = new ClientThread(clientAddress, Integer.parseInt(clientPort), command, resultTextView);
+            clientThread.start();
         }
     }
 
@@ -95,6 +168,7 @@ public class PracticalTest02MainActivity extends AppCompatActivity {
         resetButton.setOnClickListener(resetAlarmButtonClickListener);
         pollButton = findViewById(R.id.poll_button);
         pollButton.setOnClickListener(pollAlarmButtonClickListener);
+        resultTextView = findViewById(R.id.result);
     }
 
     @Override

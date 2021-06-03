@@ -113,4 +113,10 @@
                 android:text="Poll"/>
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/result"
+        android:layout_below="@id/client_input2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>

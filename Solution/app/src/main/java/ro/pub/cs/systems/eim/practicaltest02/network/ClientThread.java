@@ -1,6 +1,7 @@
 package ro.pub.cs.systems.eim.practicaltest02.network;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,12 +15,14 @@ public class ClientThread extends Thread {
     private final String address;
     private final int port;
     private final String command;
+    private final TextView resultTextView;
     private Socket socket;
 
-    public ClientThread(String address, int port, String command) {
+    public ClientThread(String address, int port, String command, TextView resultTextView) {
         this.address = address;
         this.port = port;
         this.command = command;
+        this.resultTextView = resultTextView;
     }
 
     @Override
@@ -42,6 +45,13 @@ public class ClientThread extends Thread {
 
             printWriter.println(command);
             printWriter.flush();
+
+            String result;
+
+            while ((result = bufferedReader.readLine()) != null) {
+                final String finalizedResult = result;
+                resultTextView.post(() -> resultTextView.setText(finalizedResult));
+            }
         } catch (IOException ioException) {
             Log.e(Constants.TAG, "[CLIENT THREAD] An exception has occurred: " + ioException.getMessage());
             if (Constants.DEBUG) {
