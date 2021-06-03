@@ -5,4 +5,9 @@ public interface Constants {
 
     boolean DEBUG = true;
     String EMPTY_STRING = "";
+    String SERVER_HOST = "utcnist.colorado.edu";
+    int SERVER_PORT = 13;
+    String INACTIVE = "inactive\n";
+    String ACTIVE = "active\n";
+    String NONE = "none\n";
 }

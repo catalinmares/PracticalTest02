@@ -54,6 +54,10 @@ public class ServerThread extends Thread {
         this.data.put(client, alarm);
     }
 
+    public synchronized void removeData(String client) {
+        this.data.remove(client);
+    }
+
     @Override
     public void run() {
         try {
